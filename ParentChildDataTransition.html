@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 父子组件数据传递</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+<!--    * 这里如果不加冒号，后面是字符串，加了冒号，相当于v-bind:,-->
+<!--    后面就成了js表达式，这里就是数字-->
+    <counter :counterprop="0" @change="handelChange"></counter>
+    <counter :counterprop="0" @change="handelChange"></counter>
+    <div>{{total}}</div>
+</div>
+
+<script>
+    // 1. 子组件接受父组件施加的couterprop属性，这里将此属性赋予本地number，因为vue中的
+    // 单项数据流设定，父组件传入的数据不能在子组件里面直接修改。因为如果是引用类型的数据，修改
+    // 之后可能会影响其他引用此数据的实例
+    var counter = {
+        template: "<div @click='handleClick'>{{number}}</div>",
+        props: {
+            counterprop : {}
+        },
+        // 传过来的属性赋予本地number
+        data() {
+            return {
+                number: this.counterprop
+            }
+        },
+        methods: {
+            handleClick() {
+                this.number++
+                // 发送事件传值，因需要使外面total同步增加，传出增量
+                this.$emit("change", 1)
+            }
+        }
+    }
+    var vm = new Vue({
+        el: "#app",
+        components: {
+            counter: counter
+        },
+        data: {
+            total: 0
+        },
+        methods: {
+            handelChange(inc) {
+                this.total += inc
+            },
+            test() {
+                alert("test")
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

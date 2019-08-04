@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Lifecycle Example</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+    // 生命周期函数就是vue实例在某个时间点自动执行的函数
+    // 这些函数并不放在methods里面，而是在实例中
+    var vm = new Vue({
+        el: "#root",
+        template: "<div>{{mes}}</div>",
+        data: {
+            mes : "Hello World"
+        },
+        // 初始化 el == undefined
+        beforeCreate() {
+            console.log("Before Create: ")
+            console.log(this.$el)
+        },
+        // 创建实例 el == undefined
+        created() {
+            console.log("Created: ")
+            console.log(this.$el)
+        },
+        // 在使用template渲染之前，也就是数据结合模板要挂载到
+        // 页面之前。此时template并没有在el里
+        // el == <div id="root"></div>
+        beforeMount() {
+            console.log("BeforeMount: ")
+            console.log(this.$el)
+        },
+        // DOM挂载到页面之后 el == <div>Hello World</div>
+        mounted() {
+            console.log("Mounted: ")
+            console.log(this.$el)
+        },
+        // 收到销毁命令vm.$destroy()后
+        beforeDestroy() {
+            console.log("beforeDestroy")
+        },
+        // 销毁后
+        destroyed() {
+            console.log("destroyed")
+        },
+        // 修改data前
+        beforeUpdate() {
+            console.log("beforeUpdate")
+        },
+        // 修改data后
+        updated() {
+            console.log("updated")
+        }
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jquery Todolist</title>
+    <script src="jquery-3.4.1.js"></script>
+</head>
+<body>
+<div>
+    <input type="text" id="input">
+    <button id="btn">提交</button>
+    <ul id="list"></ul>
+</div>
+<script>
+    // 1. 创建Page类
+    function Page() {
+    }
+    // 2. 给Page类增加方法
+    $.extend(Page.prototype, {
+        // 3. 定义初始化，绑定事件
+        init: function () {
+            this.bindEvents()
+        },
+        // 4. 绑定事件
+        bindEvents() {
+            var btn = $('#btn')
+            // jquery.proxy,将this绑定到handleBtnClick方法上，相当于
+            // addEventLisener().bind(this)
+            btn.on('click', $.proxy(this.handleBtnClick, this))
+        },
+        // 5. 完成事件逻辑
+        handleBtnClick() {
+            // 先声明元素，保存与参数，而不是每次都选择，这样会提高性能
+            var inputElem = $('#input')
+            var val = inputElem.val()
+            var ulElem = $('#list')
+            ulElem.append('<li>' + val + '</li>')
+            inputElem.val("")
+        }
+    })
+    // 6. 创建实例应用
+    var page = new Page()
+    page.init()
+</script>
+</body>
+</html>

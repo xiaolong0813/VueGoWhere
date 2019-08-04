@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 插槽</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <child>
+<!--        作用域插槽，可以在外部控制子组件的样式，比如这里在外面的li增加style，以及-hello等-->
+<!--        1. 需要在外面用template声明作用域，并自定义作用域名称prop，用于接受子组件slot数据，插槽slot中的数据
+                就放在其属性中-->
+        <template slot-scope="prop">
+<!--        3. 使用名称prop引用其itemprop属性就可以得到子组件传来的数据,
+               实际渲染的时候，这里的h1标签就传入了子组件并替换了slot-->
+            <li style="color: red;">{{prop.itemprop}} - hello</li>
+        </template>
+    </child>
+</div>
+
+
+<script>
+    Vue.component('child', {
+        data() {
+            return {list: [1,2,3,4]}
+        },
+        // 2. 子组件模板中需要将数据传到父组件的template中，将数据item绑定到作用域属性itemprop上
+        //    相当于这里只提供数值，具体如何显示渲染，在外面决定
+        template: `
+                    <div>
+                        <ul>
+                            <slot v-for="item of list" :itemprop="item"></slot>
+                        </ul>
+                    </div>
+                  `
+        // template: `<div>
+        //                 <p>hello</p>
+        //                 <slot name="p1"></slot>
+        //                 <slot name="p2"></slot>
+        //                 <slot name="p3"></slot>
+        //             </div>`
+    })
+
+    var vm = new Vue({
+        el: "#app"
+    })
+</script>
+
+</body>
+</html>

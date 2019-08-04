@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="inputValue">
+    <button @click="addTodo">提交</button>
+    <ul>
+<!--        使用组件template的格式，可以小写，驼峰用-代替-->
+<!--        该组件为整体组件的子组件，其todo值需要从外面用props传入-->
+<!--        这里声明组件的content的prop，然后将其用v-bind:绑定在todo上(可以用:代替)-->
+<!--        用（todo,index) in list的方式可以循环的同时获取其索引，并作为属性传给子组件-->
+        <todo-item
+                v-bind:content="todo"
+                v-bind:index="index"
+                v-for="(todo,index) in list"
+                @delete="handleItemDelete"
+        >
+        </todo-item>
+<!--        <li v-for="todo in list">{{todo}}</li>-->
+    </ul>
+</div>
+
+<script>
+    // 使用组件两种方式：
+    // 1）创建全局组件，直接引入
+    // Vue.component("TodoItem", {
+    //     props: ['content'],
+    //     template: "<li>{{content}}</li>"
+    // })
+
+    // 2）局部组件,通过注册到app Vue实例中的components引入
+    var TodoItem = {
+        props: ['content', 'index'],
+        template: "<li @click='handleItemClick'>{{content}}</li>",
+        methods: {
+            handleItemClick() {
+                // 通知父组件也就是app事件,以及本身索引
+                this.$emit("delete", this.index)
+            }
+        }
+    }
+    var app = new Vue({
+        el : '#app',
+        components: {
+            TodoItem
+        },
+        data : {
+            list: [],
+            inputValue : ''
+        },
+        methods : {
+            // 声明this.list，this.inputValue，会自动
+            // 取data里面搜索该参数
+            addTodo: function () {
+                this.list.push(this.inputValue)
+                // v-model 双向绑定，在元素或者在vue实例中修改
+                // 都会同时改变
+                this.inputValue = ''
+            },
+            // 监听了删除事件并获取了index
+            handleItemDelete(index) {
+                console.log(TodoListVue)
+                this.list.splice(TodoListVue, 1)
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

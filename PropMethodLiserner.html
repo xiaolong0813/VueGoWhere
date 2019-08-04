@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计算属性，方法，监听器</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    {{fullName1}}
+<!--    使用方法需要调用该方法-->
+    {{fullName2()}}
+    <!--    使用监听器-->
+    {{fullName3}}
+</div>
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            firstName: "Xu",
+            lastName: "Xiaolong",
+            // 因为第三个只有改变才能显示，需要初始值
+            fullName3: "Xu Xiaolong"
+        },
+        // 1. 计算属性实现
+        // 缓存性能：如果依赖的值没有改变，会继续使用缓存中已经计算过的结果
+        // ，而不会再调用此函数
+        computed: {
+            // fullName1() {
+            //     return this.firstName + " " + this.lastName
+            // }
+            fullName1: {
+                // computed里面也可以用get方法获取数据。写法和上面的效果是一样的
+
+                get: function () {
+                    return this.firstName + " " + this.lastName
+                },
+                // 当对fullname1 进行赋值set的时候，会调用该方法
+                // 因为computed中依赖的值发生变化时，就会重新计算，
+                set: function (value) {
+                    var arr = value.split(" ")
+                    this.firstName = arr[0]
+                    this.lastName = arr[1]
+                }
+            }
+        },
+        // 2. 通过方法的方式实现，但是无法使用缓存。即不管是否有值改变，
+        // 都会调用此函数。性能不如计算属性
+        methods: {
+            fullName2() {
+                return this.firstName + " " + this.lastName
+            }
+        },
+        // 3. 监听器的方法实现。如果依赖的两个值都没有改变时，也可以利用缓存的值
+        // 但相比computed语法复杂了很多。
+        watch: {
+            // 监听firstName的改变
+            firstName() {
+                this.fullName3 = this.firstName + " " + this.lastName
+            },
+            // 监听lastName的改变
+            lastName() {
+                this.fullName3 = this.firstName + " " + this.lastName
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 中的样式绑定</title>
+    <script src="vue.js"></script>
+    <style>
+        .activatedDiv {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+<!--    点击按钮变红色，借助js表达式-->
+<!--   1. class的对象绑定。 :class后面是{class:boolean}形式，当isActivated为true时赋予该样式-->
+    <div
+            @click="handleDivClick1"
+            :class="{activatedDiv : isActivated}">
+        第一种方式，对象绑定
+    </div>
+
+<!--    2. class的样式变量数组绑定，用[]内部写入一个变量(下面的data里面)，判断是哪个style
+            这里activated2是变量名，如果直接加变量，可以写为['activatedDiv']
+            这里的数组可以写入多个值，同时施加。如[activated2，'activatedAnother']-->
+    <div
+            @click="handleDivClick2"
+            :class="[activated2]">
+        第二种方式，参数绑定
+    </div>
+
+<!--    3. 绑定样式:style。点击按钮切换不同的style样式。也可以写成数组的形式，如下面的形式
+            注意后面为js表达式，不能写font-size的形式，应该为fontSize，后面的值要加引号-->
+    <div
+            :style="[StyleObj, {fontSize:'30px'}]"
+            @click="handleDivClick3"
+    >
+        第三种方式，绑定样式style
+    </div>
+
+</div>
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            isActivated : false,
+            // 第二个方法的参数：
+            activated2 : "",
+            // 第三个方法的参数
+            StyleObj: {
+                color: "black"
+            }
+        },
+        methods: {
+            handleDivClick1() {
+                this.isActivated = !this.isActivated
+            },
+            handleDivClick2() {
+                this.activated2 = this.activated2 === "activatedDiv" ? "" : "activatedDiv"
+            },
+            handleDivClick3() {
+                this.StyleObj.color = this.StyleObj.color === "black" ? "red" : "black"
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

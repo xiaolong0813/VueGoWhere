@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 列表渲染</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+<!--    只输出值-->
+    <div v-for="item of userInfo">{{item}}</div>
+<!--    输出 值-键-索引-->
+    <div v-for="(item, key, index) of userInfo">
+        {{item}}--{{key}}--{{index}}
+    </div>
+</div>
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            userInfo: {
+                    name: "xxl",
+                    age: 25,
+                    gender: "male"
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

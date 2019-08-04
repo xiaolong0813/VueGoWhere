@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 非父子组件数据传递(Bus/总线/发布订阅模式/观察者模式)</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <child1 content="xu"></child1>
+    <child2 content="xiaolong"></child2>
+</div>
+
+<script>
+    // 在Vue原型上绑定bus属性，该属性指向Vue实例，之后创建的Vue每个组件实例，都会有该属性
+    // 可以使用该属性进行组件之间传值
+    Vue.prototype.bus = new Vue()
+    // 发布订阅模式原理：
+    // 1. bus属性定义在Vue原型链上的，所以每个组件都会访问到，为公共对象
+    // 2. this.bus._events 是vue实例中包含事件即函数的字典，类似
+    // this.bus._events = {event1 : [fn1, fn2..], event2 : [fn1, fn2..]}
+    // 3. 所谓发布即绑定事件，也就是this.bus.$on(event, fn(this,args)) 就是往
+    // this.bus。_events字典里面key为event对应的数组里面push进该fn(this,args)，注意
+    // 该this指向调用该fn的实例。如果没找到就在里面创建键值对 event : [fn]
+    // 4. 所谓订阅，即发送事件$emit(event,args)的时候就是在this.bus._events里面搜索key为event的值
+    // 也就是[fn1, fn2..]，如果搜到了，就按照顺序执行数组中的所有函数
+
+    Vue.component("child1", {
+        template: "<div @click='handleClick'>{{selfContent}}</div>",
+        props: {content: String},
+        data(){return {selfContent: this.content}},
+        methods: {
+            handleClick() {
+                // 因为在mounted的时候两个组件把f1-f4 四个方法push到了this.bus._event["change"]
+                // 此时 this.bus._event = { change : [f1, f2, f3, f4] }
+                // 这里的this.bus.$emit 会依次执行数组中的 f1 - f4
+                this.bus.$emit('change', this.selfContent)
+            }
+        },
+        // 使用生命周期钩子进行事件监听，即该组件被挂载时，插入监听函数(类似angular里的ngOnInit)
+        // 下面的监听会把这三个方法都push到this.bus._event["change"]对应的数组里面
+        // 如果没有在挂载的时候就把方法push进去，后面在 $emit的时候就会找不到该事件
+        // 不同场景的触发事件应该使用不同的命名，即事件名，使用不同事件名订阅，防止冲突
+        mounted() {
+            // f1
+            this.bus.$on("change", function () {
+                console.log("我也听到了，但我不改文字1")
+            })
+            // f2
+            this.bus.$on("change", function () {
+                console.log("我也听到了，但我不改文字2")
+            })
+            // f3
+            this.bus.$on("change", function () {
+                console.log("我也听到了，但我不改文字3")
+            })
+        }
+    })
+    Vue.component("child2", {
+        template: "<div>{{selfContent}}</div>",
+        props: {content: String},
+        data(){return {selfContent: this.content}},
+        // 下面又将一个方法push入this.bus._event["change"]中
+        mounted() {
+            var that = this
+            // f4（这里的参数在mounted的时候引用的是null，当emit的时候再引用具体的值）
+            this.bus.$on("change", function (msg) {
+                console.log(this.bus._events["change"][3].arguments)
+                that.selfContent += msg
+            })
+        }
+    })
+    var vm = new Vue({
+        el: "#app",
+    })
+</script>
+
+</body>
+</html>

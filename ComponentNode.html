@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 组件的细节点</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+<!--    子组件一-->
+    <table>
+        <tbody>
+            <tr is="row"></tr>
+            <tr is="row"></tr>
+        </tbody>
+    </table>
+<!--    子组件二, 两个-->
+    <counter ref="one" @change="handleChange"></counter>
+    <counter ref="two" @change="handleChange"></counter>
+    <div>{{total}}</div>
+</div>
+<script>
+    // 1. 表格中的row子组件
+    Vue.component("row", {
+        template: "<tr><tb>{{content}}</tb></tr>",
+        // 非根组件的data必须是函数形式。和根组件不同。
+        // 因为根组件只有一个实例。data为唯一，可以为对象。
+        // 而子组件如果被复用，由于js中的对象是引用类型，
+        // 使得所有实例公用data对象，修改一个所有实例都会影响
+        // 而函数每次返回的是一个新的对象实例，引用地址不同，
+        // 所以每个实例有自己的数据
+        data: function () {
+            return {
+                content: "this is xxl"
+            }
+        }
+    })
+
+    // 2. 计数器子组件
+    Vue.component("counter", {
+        template: "<div @click='handleClick'>{{number}}</div>",
+        data() {
+            return {
+                number: 0
+            }
+        },
+        methods: {
+            handleClick() {
+                this.number++
+                this.$emit('change')
+            }
+        }
+    })
+    // 根组件
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            total: 0
+        },
+        methods: {
+            handleChange() {
+                this.total = this.$refs.one.number + this.$refs.two.number
+            }
+        }
+    })
+
+
+</script>
+
+</body>
+</html>
