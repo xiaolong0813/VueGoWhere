@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 动画封装</title>
+    <script src="../vue.js"></script>
+    <script src="../velocity.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <button @click="handleClick">Toggle</button>
+
+<!--    fade组件里面使用fadeprop属性接收show变量-->
+<!--    封装之后可以直接用组件实现动画效果，style类型也封装在组件里-->
+    <fade :fadeprop="show">
+        <div>Hello World</div>
+    </fade>
+
+    <fade :fadeprop="show">
+        <h2>Hello World</h2>
+    </fade>
+</div>
+
+<script>
+    Vue.component("fade", {
+        props: ['fadeprop'],
+        template: `
+            <transition
+                        mode="out-in"
+                        @before-enter="beforeEnter"
+                        @enter="enter"
+                        @before-leave="beforeLeave"
+                        @leave="leave"
+                    >
+                <slot v-if="fadeprop"></slot>
+            </transition>
+                   `,
+        methods: {
+            beforeEnter(el) {
+                el.style.opacity = 0
+            },
+            enter(el, done) {
+                Velocity(el, {opacity: 1}, {duration: 1000, complete: done})
+            },
+            beforeLeave(el) {
+                el.style.opacity = 1
+            },
+            leave(el, done) {
+                Velocity(el, {opacity: 0}, {duration: 1000, complete: done})
+            }
+        }
+    })
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick() {
+                this.show = !this.show
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

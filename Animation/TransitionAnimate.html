@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 中的CSS 动画原理</title>
+    <script src="../vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="../animate.css">
+    <style>
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0;
+        }
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity 3s;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+<!--    使用动画效果需要transition标签，包裹后，vue会分析内部元素的css样式
+         然后构建动画流程-->
+<!--    引入animate.css库，可以使用其中的动画效果，其中的动画形式为keyframes定义，
+         注意：
+         1) 必须使用enter-active-class这种形式定义
+         2) 指定class="animated 动画效果名"
+         3) 其中动画效果名称可以在animate.css官网查看
+         4) 使用appear（先定义，再添加appear-active-class并使其等于enter-active-class
+            可以实现在初始的时候就调用enter的样式
+         5) 可以在animated的class样式后面添加fade-enter-active来与自定义的transition样式
+            结合使用。其中若animated和transition的时间定义不同，vue无法分辨使用哪个，可以在
+            标签里面使用type进行标注，选择以哪个为准，动画就持续该时间
+         6) 可以使用:duration 指定class样式存在的时间。即使动画执行完了，class样式依然存在，比如:
+            :duration="10000"。也可以写为下面的形式，即enter的active持续3s，leave的持续5s
+-->
+    <transition
+            :duration="{enter: 3000, leave: 5000}"
+            type="transition"
+            name="fade"
+            appear
+            enter-active-class="animated swing fade-enter-active"
+            leave-active-class="animated shake fade-leave-active"
+            appear-active-class="animated swing"
+    >
+        <div v-if="show">Hello World</div>
+    </transition>
+
+    <button @click="handleClick">切换</button>
+</div>
+
+<script>
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick() {
+                this.show = !this.show
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 中的CSS 动画原理</title>
+    <script src="../vue.js"></script>
+    <style>
+        /*.fade-enter,*/
+        /*.fade-leave-to {*/
+        /*    opacity: 0;*/
+        /*}*/
+        /*.fade-enter-active,*/
+        /*.fade-leave-active {*/
+        /*    !*transition的作用是检测某个属性，*/
+        /*    一旦属性发生变化，就按照设置*!*/
+        /*    !*的参数对变化进行过渡展示*!*/
+        /*    transition: opacity 1s;*/
+        /*}*/
+
+        /*CSS3 中的动画创建功能*/
+        @keyframes bounce-in {
+            0% {
+                /*CSS3中的转换命令，scale为缩放*/
+                transform: scale(0);
+            }
+            50% {
+                /*CSS3中的转换命令，scale为缩放*/
+                transform: scale(1.5);
+            }
+            100% {
+                /*CSS3中的转换命令，scale为缩放*/
+                transform: scale(1);
+            }
+        }
+        /*显示和隐藏的过程中一直存在*/
+        /*animation属性，指定keyframes*/
+        /*防止动画异常，设定变化的origin*/
+        /*隐藏时反向执行*/
+        .enter {
+            transform-origin: left center;
+            animation: bounce-in 1s;
+        }
+        .leave {
+            transform-origin: left center;
+            animation: bounce-in 1s reverse;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+<!--    使用动画效果需要transition标签，包裹后，vue会分析内部元素的css样式
+         然后构建动画流程-->
+    <transition
+            name="fade"
+            enter-active-class="enter"
+            leave-active-class="leave"
+    >
+        <div v-if="show">Hello World</div>
+    </transition>
+
+    <button @click="handleClick">切换</button>
+</div>
+
+<script>
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick() {
+                this.show = !this.show
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 组件</title>
+    <script src="../vue.js"></script>
+    <style>
+        .v-enter, .v-leave-to {
+            opacity: 0;
+        }
+        .v-enter-active, .v-leave-active {
+            transition: opacity 1s;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+<!--    这里的mode设置可以指定enter和leave的顺序：-->
+<!--    in-out：要进入的先enter，要leave的再消失。out-in相反-->
+    <transition mode="out-in">
+<!--        1. 多个元素的动画切换-->
+<!--        如果不添加key，vue会复用元素，元素不会交替，动画不会触发-->
+<!--        <div v-if="show" key="hello">Hello World</div>-->
+<!--        <div v-else key="bye">Bye World</div>-->
+
+<!--        2. 多个组件的动画切换-->
+<!--            a) 组件切换-->
+<!--        <child1 v-if="show"></child1>-->
+<!--        <child2 v-else></child2>-->
+<!--            b) 动态组件-->
+        <component :is="show ? 'child1' : 'child2'"></component>
+
+    </transition>
+
+    <button @click="handleClick">切换</button>
+</div>
+
+<script>
+    // 定义两个组件进行切换
+    Vue.component("child1", {
+        template: "<div>child-one</div>"
+    })
+    Vue.component("child2", {
+        template: "<div>child-two</div>"
+    })
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick() {
+                this.show = !this.show
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

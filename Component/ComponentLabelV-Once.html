@@ -3,15 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Vue 动态组件和v-once</title>
-    <script src="vue.js"></script>
+    <script src="../vue.js"></script>
 </head>
+<style>
+    .v-enter,
+    .v-leave-to {
+        opacity: 0;
+    }
+    .v-enter-active,
+    .v-leave-active {
+        /*transition的作用是检测某个属性，
+        一旦属性发生变化，就按照设置*/
+        /*的参数对变化进行过渡展示*/
+        transition: opacity 1s;
+    }
+</style>
 <body>
 
 <div id="app">
 <!--    vue 自带 动态组件标签-->
-<!--    <component :is="type"></component>-->
-    <child-one v-if="type === 'child-one'"></child-one>
-    <child-two v-if="type === 'child-two'"></child-two>
+    <transition>
+<!--        <component :is="type"></component>-->
+        <child-one v-if="type === 'child-one'"></child-one>
+        <child-two v-if="type === 'child-two'"></child-two>
+    </transition>
+
     <button @click="handleClick">Change</button>
 
 </div>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue中的JS动画及Velocity.js相结合</title>
+    <script src="../vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="../animate.css">
+    <script src="../velocity.min.js"></script>
+</head>
+<body>
+<div id="app">
+<!--    除了css动画之外，vue也提供了js动画的效果，提供了一些js动画钩子
+        @before-enter: 开始动画前执行，接受一个参数，为transition标签内部元素
+        @enter: 开始时执行。接受两个参数，一为内部元素，二为done回调函数。函数执行结束后，
+                需要手动调用done(),通知动画执行完毕，调用after-enter
+        @after-enter: js的执行done()之后执行。
+        @before-leave, @leave, @after-leave 和前三个使用方法完全一致-->
+
+    <transition
+            name="fade"
+            @before-enter="handleBeforeEnter"
+            @enter="handleEnter"
+            @after-enter="handleAfterEnter"
+            @before-leave="handleBeforeLeave"
+            @leave="handleLeave"
+            @after-leave="handleAfterLeave"
+    >
+        <div v-if="show">Hello World</div>
+    </transition>
+
+    <button @click="handleClick">切换</button>
+</div>
+
+<script>
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick() {
+                this.show = !this.show
+            },
+            // el 指的是transition标签内部元素
+            handleBeforeEnter(el) {
+                // el.style.color = "red"
+                el.style.opacity = 0
+            },
+            handleEnter(el, done) {
+                // setTimeout(() => {
+                //     el.style.color = "green"
+                // }, 2000)
+                // setTimeout(() => {
+                //     // 再过2s调用done通知执行after-enter
+                //     done()
+                // },4000)
+                Velocity(el,
+                    {opacity: 1},
+                    {
+                        duration: 1000,
+                        complete: done
+                    })
+            },
+            handleAfterEnter(el) {
+                el.style.color = "#000"
+            },
+            handleBeforeLeave(el) {
+                el.style.color = "yellow"
+            },
+            handleLeave(el, done) {
+                setTimeout(() => {
+                    el.style.color = "blue"
+                }, 2000)
+                setTimeout(() => {
+                    // 再过2s调用done通知执行after-enter
+                    done()
+                },4000)
+            },
+            handleAfterLeave(el) {
+                console.log("已经离开了")
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
